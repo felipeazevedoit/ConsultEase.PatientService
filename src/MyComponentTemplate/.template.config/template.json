@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Felipe Azevedo",
+    "classifications": ["Web", "API", "Template"],
+    "identity": "MyComponentTemplate",
+    "name": "Template de Componente",
+    "shortName": "mycomponenttemplate",
+    "sourceName": "MyComponentTemplate",
+    "tags": {
+      "language": "C#",
+      "type": "project"
+    },
+    "symbols": {
+      "ComponentName": {
+        "type": "parameter",
+        "datatype": "string",
+        "description": "O nome do componente",
+        "replaces": "MyComponent"
+      }
+    }
+  }
+  
