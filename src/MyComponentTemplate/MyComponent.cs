@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 namespace MyComponentTemplate
 {
     public class MyComponent
@@ -16,7 +15,6 @@ namespace MyComponentTemplate
             _healthCheckService = healthCheckService;  // Injeta o HealthCheckService
         }
 
-        // Método que usa o HealthCheckService
         public async Task CheckHealthAsync()
         {
             var report = await _healthCheckService.CheckHealthAsync();
@@ -32,7 +30,6 @@ namespace MyComponentTemplate
 
             try
             {
-                // Lógica simulada de operação
                 _logger.LogInformation("Operação em andamento...");
                 _logger.LogInformation("Operação finalizada com sucesso.");
             }
@@ -42,7 +39,6 @@ namespace MyComponentTemplate
             }
         }
 
-        // Outro método que usa HttpClient e Logger
         public async Task DoWorkAsync()
         {
             _logger.LogInformation("Iniciando operação no MyComponent.");

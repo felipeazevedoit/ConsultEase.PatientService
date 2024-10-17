@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,24 +21,28 @@ namespace MyComponentTemplate
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Registrar o Logger (ex: Serilog)
             services.AddLogging(loggingBuilder =>
             {
-                loggingBuilder.AddSerilog(dispose: true); // Certifique-se de que o Serilog está configurado
+                loggingBuilder.AddSerilog(dispose: true);
             });
 
-            // Registrar Polly com uma política de Retry
             services.AddHttpClient("ExternalAPI")
-                .AddPolicyHandler((IAsyncPolicy<HttpResponseMessage>)Polly.Policy.Handle<HttpRequestException>()
+            .AddPolicyHandler((serviceProvider, request) =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger<MyComponent>>();
+
+                return Policy<HttpResponseMessage>
+                    .Handle<HttpRequestException>()
                     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                     (exception, timeSpan, retryCount, context) =>
                     {
-                        // Log de erro ao tentar
-                        var logger = services.BuildServiceProvider().GetRequiredService<ILogger<MyComponent>>();
-                        logger.LogWarning($"Tentativa {retryCount} falhou. Tentando novamente...");
-                    }));
+                        logger.LogWarning($"Attempt {retryCount} failed. Retrying in {timeSpan.TotalSeconds} seconds...");
+                    });
+            });
 
-            // Registrar o componente que vai usar Logger e Polly
+
+
+
             services.AddTransient<MyComponent>();
         }
 
@@ -47,11 +53,32 @@ namespace MyComponentTemplate
                 app.UseDeveloperExceptionPage();
             }
 
-            // Configuração do health check endpoint
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHealthChecks("/health");
             });
+
+
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                    var logger = context.RequestServices.GetRequiredService<ILogger<Startup>>();
+
+                    if (exceptionHandlerPathFeature != null)
+                    {
+                        var exception = exceptionHandlerPathFeature.Error;
+
+                        logger.LogError(exception, "An unhandled exception occurred");
+
+                        context.Response.StatusCode = 500;
+                        await context.Response.WriteAsync("An unexpected error occurred.");
+                    }
+                });
+            });
+
+
         }
     }
 }
