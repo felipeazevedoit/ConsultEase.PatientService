@@ -2,16 +2,23 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Primitives;
 
+/// <summary>
+/// Represents a custom configuration provider.
+/// </summary>
 public class Configuration : IConfiguration
 {
     private readonly Dictionary<string, string> _settings;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Configuration"/> class.
+    /// </summary>
+    /// <param name="settings">The configuration settings.</param>
     public Configuration(Dictionary<string, string> settings)
     {
         _settings = settings;
     }
 
-    // Implementa o método GetSection da interface
+    /// <inheritdoc />
     public IConfigurationSection GetSection(string key)
     {
         if (_settings.ContainsKey(key))
@@ -21,7 +28,7 @@ public class Configuration : IConfiguration
         return null;
     }
 
-    // Implementa o método GetChildren da interface
+    /// <inheritdoc />
     public IEnumerable<IConfigurationSection> GetChildren()
     {
         foreach (var kvp in _settings)
@@ -30,11 +37,13 @@ public class Configuration : IConfiguration
         }
     }
 
+    /// <inheritdoc />
     public IChangeToken GetReloadToken()
     {
         throw new NotImplementedException();
     }
 
+    /// <inheritdoc />
     public T GetValue<T>(string key)
     {
         if (_settings.TryGetValue(key, out var value))
@@ -44,6 +53,11 @@ public class Configuration : IConfiguration
         return default;
     }
 
+    /// <summary>
+    /// Gets or sets the configuration value for the specified key.
+    /// </summary>
+    /// <param name="key">The configuration key.</param>
+    /// <returns>The configuration value.</returns>
     public string this[string key]
     {
         get => _settings.ContainsKey(key) ? _settings[key] : null;

@@ -1,13 +1,12 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate", "MyComponentTemplate.csproj", "{E9AED743-CF99-4333-A08B-CA84817A02B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate", "MyComponentTemplate\MyComponentTemplate.csproj", "{E9AED743-CF99-4333-A08B-CA84817A02B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Infra", "..\MyComponentTemplate.Infra\MyComponentTemplate.Infra.csproj", "{6EA9280D-1283-4DC2-9BF0-87151DE5E760}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Infra", "MyComponentTemplate.Infra\MyComponentTemplate.Infra.csproj", "{6EA9280D-1283-4DC2-9BF0-87151DE5E760}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Tests", "..\MyComponentTemplate.Tests\MyComponentTemplate.Tests.csproj", "{CEEAC755-D09A-49D2-BD23-EC2AB3443216}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Tests", "MyComponentTemplate.Tests\MyComponentTemplate.Tests.csproj", "{CEEAC755-D09A-49D2-BD23-EC2AB3443216}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

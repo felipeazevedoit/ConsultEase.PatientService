@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Felipe Azevedo",
+  "classifications": ["Component", "Code", "ASP.NET", "C#", "template"],
+  "identity": "MyComponentTemplate",
+  "groupIdentity": "MyComponentTemplateGroup",
+  "name": "MyComponentTemplate",
+  "shortName": "FosforusTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "symbols": {
+    "SolutionName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "Auth",
+      "replaces": "Auth.sln",
+      "fileRename": "Auth.sln",
+      "description": "Nome da Solução"
+    },
+    "ProjectName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "MyComponentTemplate",
+      "replaces": "MyComponentTemplate",
+      "fileRename": "MyComponentTemplate",
+      "description": "Nome do Projeto"
+    },
+    "InfraProjectName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "MyComponentTemplate.Infra",
+      "replaces": "MyComponentTemplate.Infra",
+      "fileRename": "MyComponentTemplate.Infra",
+      "description": "Nome do Projeto Infra"
+    },
+    "TestsProjectName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "MyComponentTemplate.Tests",
+      "replaces": "MyComponentTemplate.Tests",
+      "fileRename": "MyComponentTemplate.Tests",
+      "description": "Nome do Projeto de Testes"
+    },
+    "NamespaceName": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "MyNamespace",
+      "replaces": "namespace MyComponentTemplate",
+      "description": "Nome do Namespace para o Projeto"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            "**/[Bb]in/**",
+            "**/[Oo]bj/**",
+            "**/*.log",
+            "**/*.user",
+            "**/*.lock.json",
+            "**/.vs/**",
+            "**/*.cache",
+            "**/*.config"
+          ],
+          "include": ["README.md", "LICENSE", ".editorconfig"]
+        }
+      ]
+    }
+  ],
+  "primaryOutputs": [
+    {
+      "path": "src/{{ProjectName}}/{{ProjectName}}.csproj"
+    },
+    {
+      "path": "src/{{InfraProjectName}}/{{InfraProjectName}}.csproj"
+    },
+    {
+      "path": "src/{{TestsProjectName}}/{{TestsProjectName}}.csproj"
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!skipRestore)",
+      "description": "Restaurar pacotes NuGet necessários para este projeto.",
+      "manualInstructions": [
+        {
+          "text": "Execute 'dotnet restore'"
+        }
+      ],
+      "actionId": "E2E2E146-F7E7-4A1B-88C2-4000378D4D67",
+      "args": {
+        "targetFiles": [
+          "src/{{ProjectName}}/{{ProjectName}}.csproj",
+          "src/{{InfraProjectName}}/{{InfraProjectName}}.csproj",
+          "src/{{TestsProjectName}}/{{TestsProjectName}}.csproj"
+        ]
+      },
+      "continueOnError": false
+    }
+  ],
+  "icons": {
+    "default": "assets/icon.png"
+  }
+}

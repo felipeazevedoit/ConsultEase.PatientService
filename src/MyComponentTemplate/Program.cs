@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MyComponentTemplate.Infra.Context;
 using MyComponentTemplate.Infra.MongoDb;
-using MyComponentTemplate.Interfaces;
-using MyComponentTemplate.Services;
 using Polly;
 using Serilog;
 
@@ -62,8 +60,8 @@ namespace MyComponentTemplate
                     ConfigureHealthChecks(services);
                     ConfigurePolly(services);
 
-                    services.AddTransient<IMyComponentService, MyComponentService>();
-                    services.AddTransient<MyComponent>();  // Registrar o MyComponent
+                    //services.AddTransient<IMyComponentService, MyComponentService>();
+                    //services.AddTransient<MyComponent>();  // Registrar o MyComponent
                 })
                 .UseSerilog();  // Configura Serilog como logger
 

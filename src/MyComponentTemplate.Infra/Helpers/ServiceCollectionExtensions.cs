@@ -1,7 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.DependencyInjection;
-using MyComponentTemplate.Entities;
-using MyComponentTemplate.Interfaces;
+using Microsoft.Extensions.Configuration; 
 
 namespace FosforosFramework.Components
 {
@@ -10,7 +9,7 @@ namespace FosforosFramework.Components
         public static IServiceCollection AddMyComponent(this IServiceCollection services)
         {
             // Registro do componente
-            services.AddTransient<IMyComponentOptions, MyComponentOptions>();
+            //services.AddTransient<IComponentOptions, ComponentOptions>();
 
             // Se precisar de algum serviço adicional, como um BlobClient, você pode configurar aqui
             services.AddSingleton(x =>
