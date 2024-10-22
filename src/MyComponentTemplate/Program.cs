@@ -4,9 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
-using MyComponentTemplate.Infra.Context;
-using MyComponentTemplate.Infra.MongoDb;
 using Polly;
 using Serilog;
 
@@ -14,13 +11,22 @@ namespace MyComponentTemplate
 {
     public class Program
     {
-        private static Microsoft.Extensions.Configuration.IConfiguration Configuration { get; set; }  // Especifica o namespace correto
+        private static IConfiguration Configuration { get; set; }
         private static string SqlConnectionString { get; set; }
-        private static string MySqlConnectionString { get; set; }
-        private static MongoDbSettings MongoDbSettings { get; set; }
 
         public static void Main(string[] args)
         {
+            // Configurando Serilog e carregando a configuração de appsettings.json
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            SqlConnectionString = Configuration.GetConnectionString("DefaultConnection")
+                                  ?? throw new InvalidOperationException("SqlConnectionString is null");
+
+            // Configuração do logger Serilog
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
@@ -50,22 +56,17 @@ namespace MyComponentTemplate
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    // Carregar variáveis como propriedades
-                    SqlConnectionString = Configuration.GetConnectionString("DefaultConnection");
-                    MySqlConnectionString = Configuration.GetConnectionString("mySqlConnectionString");
-                    MongoDbSettings = Configuration.GetSection("MongoDB").Get<MongoDbSettings>();
-
                     ConfigureDatabases(services);
                     ConfigureLogging(services);
                     ConfigureHealthChecks(services);
                     ConfigurePolly(services);
 
-                    //services.AddTransient<IMyComponentService, MyComponentService>();
-                    //services.AddTransient<MyComponent>();  // Registrar o MyComponent
+                    // Registrar outros serviços, como MyComponent
+                    // services.AddTransient<IMyComponentService, MyComponentService>();
                 })
                 .UseSerilog();  // Configura Serilog como logger
 
-        private static Microsoft.Extensions.Configuration.IConfiguration ConfigureAppSettings(HostBuilderContext context, IConfigurationBuilder config)
+        private static IConfiguration ConfigureAppSettings(HostBuilderContext context, IConfigurationBuilder config)
         {
             var env = context.HostingEnvironment;
             config.SetBasePath(Directory.GetCurrentDirectory())
@@ -78,39 +79,27 @@ namespace MyComponentTemplate
 
         private static void ConfigureDatabases(IServiceCollection services)
         {
-            // SQL Server
-            services.AddDbContext<MyComponentDbContext>(options =>
+            // Configura o banco de dados SQL Server
+            services.AddDbContext<DbContext>(options =>
                 options.UseSqlServer(SqlConnectionString));
-
-            // MongoDB
-            services.AddSingleton<IMongoClient>(sp => new MongoClient(MongoDbSettings.ConnectionString));
-            services.AddScoped<IMongoDatabase>(sp =>
-            {
-                var client = sp.GetRequiredService<IMongoClient>();
-                return client.GetDatabase(MongoDbSettings.DatabaseName);
-            });
-
-            // MySQL
-            services.AddDbContext<Infra.MySql.MyComponentDbContext>(options =>
-                options.UseMySql(MySqlConnectionString, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(MySqlConnectionString)));
         }
 
         private static void ConfigureLogging(IServiceCollection services)
         {
-            services.AddLogging(loggingBuilder =>
-            {
-                loggingBuilder.AddSerilog();
-            });
+            // Adiciona Serilog como provedor de logging
+            services.AddLogging(loggingBuilder => { loggingBuilder.AddSerilog(); });
         }
 
         private static void ConfigureHealthChecks(IServiceCollection services)
         {
+            // Configura health checks
             services.AddHealthChecks();
             services.AddSingleton<HealthCheckService>();
         }
 
         private static void ConfigurePolly(IServiceCollection services)
         {
+            // Configura o Polly para gerenciamento de resiliência com política de retry
             services.AddHttpClient("ExternalAPI")
                 .AddPolicyHandler((IAsyncPolicy<HttpResponseMessage>)Policy.Handle<HttpRequestException>()
                     .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),

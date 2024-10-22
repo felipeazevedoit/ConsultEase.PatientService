@@ -33,4 +33,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="IntegrationTests\" />
+	  <Folder Include="MockData\" />
+	  <Folder Include="TestHelper\" />
+	  <Folder Include="UnitTests\" />
+	</ItemGroup>
+
 </Project>

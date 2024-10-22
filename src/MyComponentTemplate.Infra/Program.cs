@@ -1,31 +1,21 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Driver;
-using MyComponentTemplate.Infra.Context;
-using MyComponentTemplate.Infra.MongoDb;
 using Serilog;
-using Serilog.Extensions.Logging;
+using System;
+using System.IO;
 
 namespace MyComponentTemplate.Infra
 {
     public class Program
     {
-        // Propriedades para armazenar strings de conexão e configurações
-        private static IConfiguration Configuration { get; set; }
-        private static string SqlConnectionString { get; set; }
-        private static string MySqlConnectionString { get; set; }
-        private static MongoDbSettings MongoDbSettings { get; set; }
-
         public static void Main(string[] args)
         {
-            // Configurando o logger Serilog
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            var configuration = BuildConfiguration();
+            var loggerConfig = ConfigureLogger(configuration);
+
+            Log.Logger = loggerConfig.CreateLogger();
 
             try
             {
@@ -42,9 +32,44 @@ namespace MyComponentTemplate.Infra
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        private static IConfiguration BuildConfiguration()
         {
-            return Host.CreateDefaultBuilder(args)
+            return new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+        }
+
+        private static LoggerConfiguration ConfigureLogger(IConfiguration configuration)
+        {
+            var mongoConnectionString = configuration["MongoDB:ConnectionString"];
+            var logCollection = "Logs";
+
+            if (string.IsNullOrEmpty(mongoConnectionString))
+                throw new ArgumentNullException(nameof(mongoConnectionString), "MongoDB connection string cannot be null or empty.");
+
+            var loggerConfig = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console();
+
+            try
+            {
+                loggerConfig.WriteTo.MongoDB(mongoConnectionString, collectionName: logCollection);
+                Log.Information("MongoDB logging configured successfully.");
+            }
+            catch (Exception ex)
+            {
+                loggerConfig.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day);
+                Log.Warning(ex, "Failed to connect to MongoDB. Falling back to file logging.");
+            }
+
+            return loggerConfig;
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     var env = context.HostingEnvironment;
@@ -53,58 +78,15 @@ namespace MyComponentTemplate.Infra
                           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                           .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                           .AddEnvironmentVariables();
-
-                    Configuration = config.Build();
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    // Obtendo strings de conexão
-                    SqlConnectionString = Configuration.GetConnectionString("DefaultConnection");
-                    MySqlConnectionString = Configuration.GetConnectionString("mySqlConnectionString");
-                    MongoDbSettings = Configuration.GetSection("MongoDB").Get<MongoDbSettings>();
-
-                    // Configuração dos serviços
-                    ConfigureDatabases(services);
-                    ConfigureLogging(services);
-
-                    // Exemplo de registro de outros serviços
-                    services.AddTransient<DatabaseService>();
+                    // Verifique se a classe DatabaseService existe, ou remova essa linha
+                    // services.AddTransient<DatabaseService>();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    // Configurar o Startup da aplicação
                     webBuilder.UseStartup<Startup>();
                 });
-        }
-
-        // Métodos para manter o código organizado, mas na mesma classe
-        private static void ConfigureDatabases(IServiceCollection services)
-        {
-            // SQL Server
-            services.AddDbContext<MyComponentDbContext>(options =>
-                options.UseSqlServer(SqlConnectionString));
-
-            // MongoDB
-            services.AddSingleton<IMongoClient>(sp => new MongoClient(MongoDbSettings.ConnectionString));
-            services.AddScoped<IMongoDatabase>(sp =>
-            {
-                var client = sp.GetRequiredService<IMongoClient>();
-                return client.GetDatabase(MongoDbSettings.DatabaseName);
-            });
-
-            // MySQL
-            services.AddDbContext<MySql.MyComponentDbContext>(options =>
-                options.UseMySql(MySqlConnectionString, Microsoft.EntityFrameworkCore.ServerVersion.AutoDetect(MySqlConnectionString)));
-        }
-
-        private static void ConfigureLogging(IServiceCollection services)
-        {
-            // Adiciona o serviço de logging
-            services.AddLogging(loggingBuilder =>
-            {
-                loggingBuilder.AddSerilog();  // Certifique-se de que o pacote Serilog.Extensions.Logging está instalado
-            });
-        }
-
     }
 }

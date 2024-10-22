@@ -1,12 +1,15 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate", "MyComponentTemplate\MyComponentTemplate.csproj", "{E9AED743-CF99-4333-A08B-CA84817A02B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyComponentTemplate", "MyComponentTemplate\MyComponentTemplate.csproj", "{E9AED743-CF99-4333-A08B-CA84817A02B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Infra", "MyComponentTemplate.Infra\MyComponentTemplate.Infra.csproj", "{6EA9280D-1283-4DC2-9BF0-87151DE5E760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyComponentTemplate.Infra", "MyComponentTemplate.Infra\MyComponentTemplate.Infra.csproj", "{6EA9280D-1283-4DC2-9BF0-87151DE5E760}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Tests", "MyComponentTemplate.Tests\MyComponentTemplate.Tests.csproj", "{CEEAC755-D09A-49D2-BD23-EC2AB3443216}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyComponentTemplate.Tests", "MyComponentTemplate.Tests\MyComponentTemplate.Tests.csproj", "{CEEAC755-D09A-49D2-BD23-EC2AB3443216}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyComponentTemplate.Core", "MyComponentTemplate.Core\MyComponentTemplate.Core.csproj", "{7DF0F80F-6F5F-4D27-A6FD-3048459B42B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +29,10 @@ Global
 		{CEEAC755-D09A-49D2-BD23-EC2AB3443216}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEEAC755-D09A-49D2-BD23-EC2AB3443216}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEEAC755-D09A-49D2-BD23-EC2AB3443216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DF0F80F-6F5F-4D27-A6FD-3048459B42B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DF0F80F-6F5F-4D27-A6FD-3048459B42B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DF0F80F-6F5F-4D27-A6FD-3048459B42B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DF0F80F-6F5F-4D27-A6FD-3048459B42B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,16 +1,52 @@
 {
+  "MongoDB": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "Database": "MyComponentDatabase"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=fosforus.database.windows.net;Database=fluencydb;User Id=dev;Password=1aA@bcde;"
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
+      "Microsoft": "Warning"
     }
   },
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TestDatabase;Trusted_Connection=True;"
+  "Azure": {
+    "SubscriptionId": "2d0e3174-b327-4b8c-9589-ca130938c9af",
+    "ResourceGroup": "Fluency",
+    "OperationId": "2B6841B5B045D9C3",
+    "OperationState": "Running",
+    "RequestId": "e087291c-e5d8-4170-b27b-5f7e738d74fc",
+    "TraceId": "87210d90-18fa-4e94-a255-12fbe4456e90",
+    "ProvisionType": "Create",
+    "ProvisionedAt": "22/10/2024 08:26:24",
+    "MongoDBCluster": {
+      "Type": "Microsoft.DocumentDB/mongoclusters",
+      "ResourceId": "/subscriptions/2d0e3174-b327-4b8c-9589-ca130938c9af/resourceGroups/Fluency/p..."
+    }
   },
-  "ExternalApiSettings": {
-    "BaseUrl": "https://fakeapi.com",
-    "ApiKey": "your-fake-api-key"
+  "Security": {
+    "JwtSecret": "your-secure-jwt-secret",
+    "TokenExpiration": "1h"
+  },
+  "EmailService": {
+    "Provider": "smtp",
+    "SmtpHost": "smtp.mailtrap.io",
+    "SmtpPort": 2525,
+    "SmtpUser": "user",
+    "SmtpPassword": "password",
+    "FromAddress": "noreply@example.com"
+  },
+  "NotificationService": {
+    "PushServiceUrl": "https://api.pushservice.com",
+    "SmsServiceUrl": "https://api.smsservice.com",
+    "ApiKey": "your-api-key"
+  },
+  "AppInsights": {
+    "InstrumentationKey": "your-instrumentation-key"
+  },
+  "FeatureToggles": {
+    "EnableNewFeatureX": false
   }
 }

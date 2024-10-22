@@ -10,14 +10,12 @@ namespace MyComponentTemplate.Infra.Context
         public DatabaseService(ILogger<DatabaseService> logger)
         {
             _logger = logger;
-
-            // Configura uma política de retry com 3 tentativas
             _retryPolicy = Policy
-                .Handle<Exception>()  // Trata todas as exceções
+                .Handle<Exception>()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(2),
                     onRetry: (exception, timespan, retryCount, context) =>
                     {
-                        Console.WriteLine($"Retrying... Attempt {retryCount}");
+                        _logger.LogWarning($"Retrying... Attempt {retryCount}");
                     });
         }
 
@@ -26,30 +24,19 @@ namespace MyComponentTemplate.Infra.Context
             try
             {
                 _logger.LogInformation("Trying to access the database...");
-
-
                 return await _retryPolicy.ExecuteAsync(async () =>
                 {
-                    // Simulando uma operação de banco de dados que pode falhar
-                    Console.WriteLine("Trying to access the database...");
-
-                    // Simulando uma falha temporária no banco de dados
+                    _logger.LogInformation("Attempting database operation...");
                     throw new Exception("Temporary DB failure!");
-
-                    // Retornar o dado do banco (aqui você deve retornar uma string real)
-                    // Exemplo:
-                    // return await _databaseContext.GetDataAsync();
                     return "Database data successfully retrieved!";
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while accessing the database.");
-                throw;  // Re-lança a exceção após o log
+                throw;
             }
-
         }
-
     }
 }
 
